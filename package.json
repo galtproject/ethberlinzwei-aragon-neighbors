@@ -24,6 +24,7 @@
     "eslint-plugin-react": "^7.14.2",
     "eslint-plugin-standard": "^4.0.0",
     "ethlint": "^1.2.4",
+    "openzeppelin-solidity": "v1.12.0",
     "prettier": "^1.18.2",
     "solidity-coverage": "^0.6.2",
     "truffle": "4.1.14"
@@ -39,6 +40,7 @@
     "start:app": "cd app && npm start && cd ..",
     "test": "cross-env TRUFFLE_TEST=true npm run ganache-cli:test",
     "compile": "aragon contracts compile",
+    "tcompile": "truffle compile",
     "build": "cd app && npm run build && cd ..",
     "publish:patch": "aragon apm publish patch",
     "publish:minor": "aragon apm publish minor",
