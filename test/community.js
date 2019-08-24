@@ -18,6 +18,8 @@ const EVMScriptRegistryFactory = artifacts.require(
 );
 const MiniMeTokenFactory = artifacts.require('MiniMeTokenFactory.sol');
 
+const CounterApp = artifacts.require('CounterApp.sol');
+
 const SpaceReputation = artifacts.require('SpaceReputation.sol');
 const SpaceToken = artifacts.require('SpaceToken.sol');
 const SpaceLocker = artifacts.require('SpaceLocker.sol');
@@ -43,11 +45,11 @@ contract('Community', ([appManager, user, alice]) => {
 
   it.only('should allow anyone creating community', async () => {
     // console.log(('web3>>>', ENSFactory.web3));
-    // const factory = await ENSFactory.new();
-    // const receipt = await factory.newENS(appManager);
+    const factory = await ENSFactory.new();
+    const receipt = await factory.newENS(appManager);
     const miniMeTokenFactory = await MiniMeTokenFactory.new();
-    //
-    // const ensAddr = receipt.logs.filter(l => l.event === 'DeployENS')[0].args.ens;
+
+    const ensAddr = receipt.logs.filter(l => l.event === 'DeployENS')[0].args.ens;
     // console.log('====================');
     // console.log('Deployed ENS:', ensAddr);
 
@@ -60,59 +62,47 @@ contract('Community', ([appManager, user, alice]) => {
       registryFactory.address
     );
 
-    const { apmFactory, ens, apm } = await DeployApm(null, {
+    const { apmFactory, ens } = await DeployApm(null, {
       artifacts,
       web3: ENSFactory.web3,
-      ensAddress: null,
+      ensAddress: ensAddr,
       owner: appManager,
       daoFactoryAddress: daoFactory.address,
       verbose: true,
     });
-    // console.log('hey11111', result);
-    // const d
-    console.log('blah-1');
 
-    // const deployer = new TemplatesDeployer(web3, artifacts, appManager, { apps, ens, verbose, daoFactory, miniMeFactory })
-    const deployer = new TemplatesDeployer(
-      ENSFactory.web3,
-      artifacts,
-      appManager,
-      {
-        apps: [],
-        ens: ens.address,
-        verbose: true,
-        daoFactory: daoFactory.address,
-        miniMeTokenFactory,
-      }
-    );
-    console.log('blah-2');
-    const template = await deployer.deploy('galt-template', 'Template');
-    console.log('blah-3');
+    const template = await artifacts.require('Template').new(daoFactory.address, ensAddr, miniMeTokenFactory.address);
+
+    const apmAddr = await artifacts.require('PublicResolver').at(await ens.resolver(hash('aragonpm.eth'))).addr(hash('aragonpm.eth'))
+    const apm = artifacts.require('APMRegistry').at(apmAddr);
+
+    const newRepo = async (apm, name, acc, contract) => {
+      console.log(`Creating Repo for ${contract}`)
+      const c = await artifacts.require(contract).new()
+      return apm.newRepoWithVersion(name, acc, [1, 0, 0], c.address, '0x1245');
+    };
+
+    console.log('Deploying apps in local network')
+    await newRepo(apm, 'voting', appManager, 'Voting')
+    await newRepo(apm, 'token-manager', appManager, 'TokenManager')
+    await newRepo(apm, 'counter-app', appManager, 'CounterApp')
+
+    console.log('apmAddr', apmAddr);
 
     const spaceLockerFactory = await SpaceLockerFactory.new();
     const spaceRegistry = await SpaceRegistry.new(spaceLockerFactory.address);
     const spaceReputation = await SpaceReputation.new();
-    console.log('blah-4');
     const spaceToken = await SpaceToken.new('Foo', 'BAR');
-    console.log('hey-1');
 
     spaceLockerFactory.setRegistry(spaceRegistry.address);
-    console.log('hey-2');
 
-    // TODO: deploy my contracts
-    console.log('hey-3');
     const res = await template.newInstance(
       spaceToken.address,
       spaceReputation.address,
       spaceRegistry.address
     );
-    console.log('hey-4');
-    console.log('fuck2');
-    console.log('len', res.logs.length);
-    console.log('logs', res.logs);
     // await app.increment(2, { from: user });
     // assert.equal(await token.balanceOf(user), 2);
     assert.equal(2, 3);
-    assert.fail('fuck');
   });
 });
