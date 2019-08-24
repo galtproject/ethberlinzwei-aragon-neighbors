@@ -51,7 +51,7 @@ contract('Community', ([appManager, user, alice, bob]) => {
     const spaceReputation = await SpaceReputation.new();
     const spaceToken = await SpaceToken.new('Foo', 'BAR');
 
-    spaceLockerFactory.setRegistry(spaceRegistry.address);
+    await spaceLockerFactory.setRegistry(spaceRegistry.address);
 
     let receipt = await spaceToken.mint(alice);
     const token1 = getEventArgument(receipt, 'Mint', 'id');

@@ -31,6 +31,7 @@
     "truffle": "4.1.14"
   },
   "scripts": {
+    "deploy:local:me": "truffle exec --network development deploy.js",
     "prepublishOnly": "aragon contracts compile",
     "extract:abi": "truffle exec ./contracts --extract-abi ./abi",
     "start": "npm run start:ipfs",
