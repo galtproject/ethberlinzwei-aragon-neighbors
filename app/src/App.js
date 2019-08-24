@@ -9,18 +9,27 @@ function App() {
 
   const state = {
     organizationAddress: useState(''),
-    spaceTokenAddress: useState('')
+    spaceTokenAddress: useState(''),
+    lockerRegistryAddress: useState('')
   };
   
   function submit() {
-    console.log('organizationAddress', organizationAddress);
+    console.log('state', state);
   }
   
   return (
     <Main>
       <BaseLayout>
         <Field label="Your organization address">
-          <input value={organizationAddress} onChange={(val) => state.organizationAddress[1](val.target.value)} />
+          <input value={state.organizationAddress[0]} onChange={(val) => state.organizationAddress[1](val.target.value)} />
+        </Field>
+        
+        <Field label="Your SpaceToken address">
+          <input value={state.spaceTokenAddress[0]} onChange={(val) => state.spaceTokenAddress[1](val.target.value)} />
+        </Field>
+
+        <Field label="Your Locker Registry address">
+          <input value={state.lockerRegistryAddress[0]} onChange={(val) => state.lockerRegistryAddress[1](val.target.value)} />
         </Field>
   
         {syncing && <Syncing />}

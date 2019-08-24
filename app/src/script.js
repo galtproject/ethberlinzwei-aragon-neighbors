@@ -7,15 +7,17 @@ const INITIALIZATION_TRIGGER = Symbol('INITIALIZATION_TRIGGER');
 
 const api = new AragonApi();
 
-const tokenManagerAddress = api.externals(['token-manager']);
+(async() => {
+  const tokenManagerAddress = await api.externals(['token-manager']).toPromise();
+  console.log('tokenManagerAddress.address', tokenManagerAddress)
+  console.log('tokenManagerAddress.address', tokenManagerAddress.address)
+  console.log('tokenManagerAddress.address()', tokenManagerAddress.address())
+})();
 
 api.store(
   async (state, event) => {
     let newState;
     
-    console.log('tokenManagerAddress.address', tokenManagerAddress.address)
-    console.log('tokenManagerAddress.address()', tokenManagerAddress.address())
-
     switch (event.event) {
       case INITIALIZATION_TRIGGER:
         newState = { count: await getValue() };
@@ -37,7 +39,7 @@ api.store(
   [
     // Always initialize the store with our own home-made event
     of({ event: INITIALIZATION_TRIGGER }),
-    tokenManagerAddress
+    // tokenManagerAddress
   ]
 );
 
