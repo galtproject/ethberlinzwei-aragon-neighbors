@@ -1,7 +1,9 @@
 pragma solidity ^0.4.24;
 
+import "./ISpaceReputation.sol";
 
-contract SpaceReputation {
+
+contract SpaceReputation is ISpaceReputation {
   // ERC721 (SpaceToken) tokenId => area (reputation)
   mapping(uint256 => uint256) internal area;
 

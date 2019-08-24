@@ -4,10 +4,11 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721Token.sol";
 import "./ArraySet.sol";
 import "./IDao.sol";
-import "./SpaceReputation.sol";
+import "./ISpaceReputation.sol";
+import "./ISpaceLocker.sol";
 
 
-contract SpaceLocker  {
+contract SpaceLocker is ISpaceLocker {
   using ArraySet for ArraySet.AddressSet;
 
   event ReputationMint(address indexed dao);
@@ -38,7 +39,7 @@ contract SpaceLocker  {
   function deposit() external onlyOwner {
     require(!tokenDeposited, "Token already deposited");
 
-    reputation = SpaceReputation(spaceReputationContract).balanceOf(spaceTokenId);
+    reputation = ISpaceReputation(spaceReputationContract).balanceOf(spaceTokenId);
     tokenDeposited = true;
 
     ERC721Token(spaceTokenContract).transferFrom(msg.sender, address(this), spaceTokenId);
@@ -93,6 +94,10 @@ contract SpaceLocker  {
 
   function isOwner() public view returns (bool) {
     return msg.sender == owner;
+  }
+
+  function getOwner() public view returns (address) {
+    return owner;
   }
 
   function getTokenInfo()

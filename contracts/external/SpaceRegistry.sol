@@ -1,10 +1,11 @@
 pragma solidity 0.4.24;
 
 import "./ArraySet.sol";
-import "./SpaceLocker.sol";
+import "./ISpaceLocker.sol";
+import "./ISpaceRegistry.sol";
 
 
-contract LockerRegistry {
+contract SpaceRegistry is ISpaceRegistry {
   using ArraySet for ArraySet.AddressSet;
 
   struct Details {
@@ -17,16 +18,20 @@ contract LockerRegistry {
   // Locker address => Details
   mapping(address => Details) public lockers;
 
-  address public _lockerFactory;
+  address public lockerFactory;
 
   constructor (address _lockerFactory) public {
-    _lockerFactory = _lockerFactory;
+    lockerFactory = _lockerFactory;
   }
 
   modifier onlyFactory() {
-    require(msg.sender == _lockerFactory, "Only factory allowed");
+    require(msg.sender == lockerFactory, "Only factory allowed");
 
     _;
+  }
+
+  function addLockerFactory(address lockerFactory) external onlyFactory {
+
   }
 
   function addLocker(address _locker) external onlyFactory {
@@ -35,7 +40,7 @@ contract LockerRegistry {
     locker.active = true;
     locker.factory = msg.sender;
 
-    emit AddLocker(_locker, SpaceLocker(_locker).owner(), locker.factory);
+    emit AddLocker(_locker, ISpaceLocker(_locker).getOwner(), locker.factory);
   }
 
   // REQUIRES

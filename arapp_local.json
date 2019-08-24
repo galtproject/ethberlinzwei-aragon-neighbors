@@ -1,0 +1,11 @@
+{
+  "environments": {
+    "rpc": {
+      "appName": "galt-template.aragonpm.eth",
+      "address": "0xd31840e26a14c13728d4777bc9acfbbecde555f8",
+      "network": "rpc",
+      "registry": "0xd5a300dedd30f1ca6c506e53bc3e5e78c399bc75"
+    }
+  },
+  "path": "contracts/Template.sol"
+}

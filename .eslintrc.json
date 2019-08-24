@@ -25,7 +25,7 @@
       "error",
       {
         "singleQuote": true,
-        "semi": false,
+        "semi": true,
         "trailingComma": "es5",
         "bracketSpacing": true,
         "jsxBracketSameLine": false

@@ -21,7 +21,13 @@ import "@aragon/apps-token-manager/contracts/TokenManager.sol";
 import "@aragon/apps-shared-minime/contracts/MiniMeToken.sol";
 
 import "./CounterApp.sol";
+//import "./external/SpaceToken.sol";
+import "./external/ISpaceRegistry.sol";
+//import "../flattened_contracts/APMRegistryFactory.sol";
+//import "./external/SpaceReputation.sol";
 
+// https://github.com/pandonetwork/pando/blob/dev/packages/pando-kit/contracts/PandoKit.sol
+// https://hack.aragon.org/docs/templates-intro
 
 contract TemplateBase is APMNamehash {
     ENS public ens;
@@ -35,7 +41,7 @@ contract TemplateBase is APMNamehash {
 
         // If no factory is passed, get it from on-chain bare-kit
         if (address(_fac) == address(0)) {
-            bytes32 bareKit = apmNamehash("bare-kit");
+            bytes32 bareKit = apmNamehash("beta-base-kit");
             fac = TemplateBase(latestVersionAppBase(bareKit)).fac();
         } else {
             fac = _fac;
@@ -57,11 +63,15 @@ contract Template is TemplateBase {
     uint64 constant PCT = 10 ** 16;
     address constant ANY_ENTITY = address(-1);
 
-    constructor(ENS ens) TemplateBase(DAOFactory(0), ens) public {
-        tokenFactory = new MiniMeTokenFactory();
+    constructor(DAOFactory _daoFactory, ENS _ens, MiniMeTokenFactory _miniMeTokenFactory, address _aragonId) TemplateBase(_daoFactory, _ens) public {
+      tokenFactory = _miniMeTokenFactory;
     }
 
-    function newInstance() public {
+    function newInstance(
+        address _spaceTokenContract,
+        ISpaceReputation _spaceReputationContract,
+        ISpaceRegistry _spaceRegistryContract
+    ) public {
         Kernel dao = fac.newDAO(this);
         ACL acl = ACL(dao.acl());
         acl.createPermission(this, dao, dao.APP_MANAGER_ROLE(), this);
@@ -71,36 +81,37 @@ contract Template is TemplateBase {
         bytes32 votingAppId = apmNamehash("voting");
         bytes32 tokenManagerAppId = apmNamehash("token-manager");
 
-        CounterApp app = CounterApp(dao.newAppInstance(appId, latestVersionAppBase(appId)));
+//        CounterApp app = CounterApp(dao.newAppInstance(appId, latestVersionAppBase(appId)));
         Voting voting = Voting(dao.newAppInstance(votingAppId, latestVersionAppBase(votingAppId)));
-        TokenManager tokenManager = TokenManager(dao.newAppInstance(tokenManagerAppId, latestVersionAppBase(tokenManagerAppId)));
+//        TokenManager tokenManager = TokenManager(dao.newAppInstance(tokenManagerAppId, latestVersionAppBase(tokenManagerAppId)));
 
-        MiniMeToken token = tokenFactory.createCloneToken(MiniMeToken(0), 0, "App token", 0, "APP", true);
-        token.changeController(tokenManager);
+//        MiniMeToken token = tokenFactory.createCloneToken(MiniMeToken(0), 0, "App token", 0, "APP", true);
+//        token.changeController(tokenManager);
 
-        // Initialize apps
-        app.initialize();
-        tokenManager.initialize(token, true, 0);
-        voting.initialize(token, 50 * PCT, 20 * PCT, 1 days);
-
-        acl.createPermission(this, tokenManager, tokenManager.MINT_ROLE(), this);
-        tokenManager.mint(root, 1); // Give one token to root
-
-        acl.createPermission(ANY_ENTITY, voting, voting.CREATE_VOTES_ROLE(), root);
-
-        acl.createPermission(voting, app, app.INCREMENT_ROLE(), voting);
-        acl.createPermission(ANY_ENTITY, app, app.DECREMENT_ROLE(), root);
-        acl.grantPermission(voting, tokenManager, tokenManager.MINT_ROLE());
-
-        // Clean up permissions
-        acl.grantPermission(root, dao, dao.APP_MANAGER_ROLE());
-        acl.revokePermission(this, dao, dao.APP_MANAGER_ROLE());
-        acl.setPermissionManager(root, dao, dao.APP_MANAGER_ROLE());
-
-        acl.grantPermission(root, acl, acl.CREATE_PERMISSIONS_ROLE());
-        acl.revokePermission(this, acl, acl.CREATE_PERMISSIONS_ROLE());
-        acl.setPermissionManager(root, acl, acl.CREATE_PERMISSIONS_ROLE());
-
-        emit DeployInstance(dao);
+//        // Initialize apps
+//        app.initialize(_spaceTokenContract, _spaceReputationContract, _spaceRegistryContract);
+//        tokenManager.initialize(token, true, 0);
+//        voting.initialize(token, 50 * PCT, 20 * PCT, 1 days);
+//
+//        acl.createPermission(this, tokenManager, tokenManager.MINT_ROLE(), this);
+//        // TODO: init with 0
+//        tokenManager.mint(root, 1); // Give one token to root
+//
+//        acl.createPermission(ANY_ENTITY, voting, voting.CREATE_VOTES_ROLE(), root);
+//
+//        acl.createPermission(voting, app, app.INCREMENT_ROLE(), voting);
+//        acl.createPermission(ANY_ENTITY, app, app.DECREMENT_ROLE(), root);
+//        acl.grantPermission(app, tokenManager, tokenManager.MINT_ROLE());
+//
+//        // Clean up permissions
+//        acl.grantPermission(root, dao, dao.APP_MANAGER_ROLE());
+//        acl.revokePermission(this, dao, dao.APP_MANAGER_ROLE());
+//        acl.setPermissionManager(root, dao, dao.APP_MANAGER_ROLE());
+//
+//        acl.grantPermission(root, acl, acl.CREATE_PERMISSIONS_ROLE());
+//        acl.revokePermission(this, acl, acl.CREATE_PERMISSIONS_ROLE());
+//        acl.setPermissionManager(root, acl, acl.CREATE_PERMISSIONS_ROLE());
+//
+//        emit DeployInstance(dao);
     }
 }

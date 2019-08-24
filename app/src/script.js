@@ -7,6 +7,8 @@ const INITIALIZATION_TRIGGER = Symbol('INITIALIZATION_TRIGGER')
 
 const api = new AragonApi()
 
+const tmAddress = api.externals(['token-manager'])
+
 api.store(
   async (state, event) => {
     let newState
@@ -30,6 +32,7 @@ api.store(
   [
     // Always initialize the store with our own home-made event
     of({ event: INITIALIZATION_TRIGGER }),
+    tokenManagerAddress
   ]
 )
 
