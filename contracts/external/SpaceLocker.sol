@@ -100,6 +100,10 @@ contract SpaceLocker is ISpaceLocker {
     return owner;
   }
 
+  function getSpaceTokenId() public view returns (uint256) {
+    return spaceTokenId;
+  }
+
   function getTokenInfo()
     external
     view
