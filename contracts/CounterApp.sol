@@ -32,10 +32,20 @@ contract CounterApp is AragonApp {
         initialized();
     }
 
+    /**
+     * @notice Initial user provides required values
+     * @param _spaceTokenContract SpaceToken address
+     * @param _spaceReputationContract SpaceReputation address
+     * @param _spaceRegistryContract SpaceRegistry address
+     * @param _initialLocker Address of an initial locker
+     * @param _tm TokenManager address
+     */
     function setup(
         address _spaceTokenContract,
         ISpaceReputation _spaceReputationContract,
-        ISpaceRegistry _spaceRegistryContract
+        ISpaceRegistry _spaceRegistryContract,
+        ISpaceLocker _initialLocker,
+        address _tm
     ) public {
         require(setupDone == false, "Setup already done");
         setupDone = true;
@@ -43,6 +53,15 @@ contract CounterApp is AragonApp {
         spaceTokenContract = _spaceTokenContract;
         spaceRegistryContract = _spaceRegistryContract;
         spaceReputationContract = _spaceReputationContract;
+
+        require(_spaceRegistryContract.isValid(_initialLocker), "Not a valid locker");
+
+        uint256 initialSpaceTokenId = _initialLocker.getSpaceTokenId();
+        approvedSpaceTokens[initialSpaceTokenId] = true;
+
+        uint256 reputation = _spaceReputationContract.balanceOf(initialSpaceTokenId);
+
+        _mintReputation(_tm, _initialLocker, reputation);
     }
 
     /**
@@ -54,19 +73,21 @@ contract CounterApp is AragonApp {
         emit Increment(msg.sender, step);
     }
 
-    function mintReputation(uint256 _tokenId, address _tm, address _receiver) external {
-        require(spaceRegistryContract.isValid(_receiver), "Not a valid locker");
+    function mintReputation(uint256 _tokenId, address _tm, address _spaceLocker) external {
+        require(spaceRegistryContract.isValid(_spaceLocker), "Not a valid locker");
 
         // TODO: check the owner is a receiver
         uint256 reputation = spaceReputationContract.balanceOf(_tokenId);
         require(reputation > 0, "Reputation is 0");
 
-        uint256 erc20balance = TokenManager(_tm).token().balanceOf(_receiver);
+        uint256 erc20balance = TokenManager(_tm).token().balanceOf(_spaceLocker);
 
-        // compare balances
         require(erc20balance == 0, "Balance should be burned first");
+        _mintReputation(_tm, _spaceLocker, reputation);
+    }
 
-        _tm.call(abi.encodeWithSignature("mint", _receiver, reputation));
+    function _mintReputation(address _tm, address _beneficiary, uint256 _amount) internal {
+        _tm.call(abi.encodeWithSignature("mint", _beneficiary, _amount));
     }
 
     /**

@@ -12,6 +12,7 @@ interface ISpaceLocker  {
   function getDaoCount() external returns (uint256);
   function isOwner() external view returns (bool);
   function getOwner() external view returns(address);
+  function getSpaceTokenId() public view returns (uint256);
   function getTokenInfo()
     external
     view

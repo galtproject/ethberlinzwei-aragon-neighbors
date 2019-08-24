@@ -13,6 +13,8 @@ const ENSFactory = artifacts.require('ENSFactory.sol');
 const Kernel = artifacts.require('Kernel.sol');
 const ACL = artifacts.require('ACL.sol');
 const DAOFactory = artifacts.require('DAOFactory.sol');
+const TokenManager = artifacts.require('TokenManager.sol');
+const Voting = artifacts.require('Voting.sol');
 const EVMScriptRegistryFactory = artifacts.require(
   'EVMScriptRegistryFactory.sol'
 );
@@ -36,6 +38,8 @@ const n = '0x00';
 contract('Community', ([appManager, user, alice]) => {
   let app;
   let tokenManager;
+  let voting;
+  let counterApp;
   let token;
 
   beforeEach('deploy dao and app', async () => {
@@ -101,12 +105,17 @@ contract('Community', ([appManager, user, alice]) => {
       spaceReputation.address,
       spaceRegistry.address
     );
-    // tokenManager = TokenManager.at(
-    //   getEventArgument(receipt, 'DeployInstance', 'proxy')
-    // );
-    // console.log(res.logs);
-    // await app.increment(2, { from: user });
-    // assert.equal(await token.balanceOf(user), 2);
+
+    tokenManager = TokenManager.at(
+      getEventArgument(receipt, 'DeployInstance', 'tokenManager')
+    );
+    voting = Voting.at(
+      getEventArgument(receipt, 'DeployInstance', 'voting')
+    );
+    counterApp = CounterApp.at(
+      getEventArgument(receipt, 'DeployInstance', 'counterApp')
+    );
+
     assert.equal(2, 3);
   });
 });
