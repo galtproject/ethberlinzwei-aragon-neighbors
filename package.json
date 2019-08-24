@@ -26,12 +26,14 @@
     "eslint-plugin-standard": "^4.0.0",
     "ethlint": "^1.2.4",
     "openzeppelin-solidity": "v1.12.0",
+    "p-iteration": "^1.1.8",
     "prettier": "^1.18.2",
     "solidity-coverage": "^0.6.2",
     "truffle": "4.1.14"
   },
   "scripts": {
     "deploy:local:me": "truffle exec --network development deploy.js",
+    "deploy:local:seed": "truffle exec --network development deploy_external.js",
     "prepublishOnly": "aragon contracts compile",
     "extract:abi": "truffle exec ./contracts --extract-abi ./abi",
     "start": "npm run start:ipfs",
