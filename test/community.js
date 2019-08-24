@@ -46,7 +46,7 @@ contract('Community', ([appManager, user, alice]) => {
   it.only('should allow anyone creating community', async () => {
     // console.log(('web3>>>', ENSFactory.web3));
     const factory = await ENSFactory.new();
-    const receipt = await factory.newENS(appManager);
+    let receipt = await factory.newENS(appManager);
     const miniMeTokenFactory = await MiniMeTokenFactory.new();
 
     const ensAddr = receipt.logs.filter(l => l.event === 'DeployENS')[0].args.ens;
@@ -96,11 +96,15 @@ contract('Community', ([appManager, user, alice]) => {
 
     spaceLockerFactory.setRegistry(spaceRegistry.address);
 
-    const res = await template.newInstance(
+    receipt = await template.newInstance(
       spaceToken.address,
       spaceReputation.address,
       spaceRegistry.address
     );
+    // tokenManager = TokenManager.at(
+    //   getEventArgument(receipt, 'DeployInstance', 'proxy')
+    // );
+    // console.log(res.logs);
     // await app.increment(2, { from: user });
     // assert.equal(await token.balanceOf(user), 2);
     assert.equal(2, 3);

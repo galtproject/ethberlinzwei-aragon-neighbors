@@ -17,6 +17,7 @@ contract CounterApp is AragonApp {
 
     /// State
     uint256 public value;
+    bool public setupDone;
     mapping(uint256 => bool) public approvedSpaceTokens;
 
     address public spaceTokenContract;
@@ -27,12 +28,17 @@ contract CounterApp is AragonApp {
     bytes32 constant public INCREMENT_ROLE = keccak256("INCREMENT_ROLE");
     bytes32 constant public DECREMENT_ROLE = keccak256("DECREMENT_ROLE");
 
-    function initialize(
+    function initialize() public onlyInit {
+        initialized();
+    }
+
+    function setup(
         address _spaceTokenContract,
         ISpaceReputation _spaceReputationContract,
         ISpaceRegistry _spaceRegistryContract
-    ) public onlyInit {
-        initialized();
+    ) public {
+        require(setupDone == false, "Setup already done");
+        setupDone = true;
 
         spaceTokenContract = _spaceTokenContract;
         spaceRegistryContract = _spaceRegistryContract;

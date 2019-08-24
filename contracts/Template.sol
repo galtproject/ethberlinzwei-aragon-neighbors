@@ -33,7 +33,7 @@ contract TemplateBase is APMNamehash {
     ENS public ens;
     DAOFactory public fac;
 
-    event DeployInstance(address dao);
+    event DeployInstance(address dao, address tokenManager, address voting, address counterApp);
     event InstalledApp(address appProxy, bytes32 appId);
 
     constructor(DAOFactory _fac, ENS _ens) public {
@@ -95,7 +95,7 @@ contract Template is TemplateBase {
         token.changeController(tokenManager);
 
         // Initialize apps
-        app.initialize(_spaceTokenContract, _spaceReputationContract, _spaceRegistryContract);
+        app.initialize();
         tokenManager.initialize(token, true, 0);
         voting.initialize(token, 50 * PCT, 20 * PCT, 1 days);
 
@@ -118,6 +118,6 @@ contract Template is TemplateBase {
         acl.revokePermission(this, acl, acl.CREATE_PERMISSIONS_ROLE());
         acl.setPermissionManager(root, acl, acl.CREATE_PERMISSIONS_ROLE());
 
-        emit DeployInstance(dao);
+        emit DeployInstance(dao, address(tokenManager), address(voting), address(app));
     }
 }
