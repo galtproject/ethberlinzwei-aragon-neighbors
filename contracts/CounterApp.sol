@@ -23,6 +23,7 @@ contract CounterApp is AragonApp {
     address public spaceTokenContract;
     ISpaceReputation public spaceReputationContract;
     ISpaceRegistry public spaceRegistryContract;
+    address tm;
 
     /// ACL
     bytes32 constant public INCREMENT_ROLE = keccak256("INCREMENT_ROLE");
@@ -53,6 +54,7 @@ contract CounterApp is AragonApp {
         spaceTokenContract = _spaceTokenContract;
         spaceRegistryContract = _spaceRegistryContract;
         spaceReputationContract = _spaceReputationContract;
+        tm = _tm;
 
         require(_spaceRegistryContract.isValid(_initialLocker), "Not a valid locker");
 
@@ -61,7 +63,7 @@ contract CounterApp is AragonApp {
 
         uint256 reputation = _spaceReputationContract.balanceOf(initialSpaceTokenId);
 
-        _mintReputation(_tm, _initialLocker, reputation);
+        _mintReputation(_initialLocker, reputation);
     }
 
     /**
@@ -73,21 +75,21 @@ contract CounterApp is AragonApp {
         emit Increment(msg.sender, step);
     }
 
-    function mintReputation(uint256 _tokenId, address _tm, address _spaceLocker) external {
+    function mintReputation(uint256 _tokenId, address _spaceLocker) external {
         require(spaceRegistryContract.isValid(_spaceLocker), "Not a valid locker");
 
         // TODO: check the owner is a receiver
         uint256 reputation = spaceReputationContract.balanceOf(_tokenId);
         require(reputation > 0, "Reputation is 0");
 
-        uint256 erc20balance = TokenManager(_tm).token().balanceOf(_spaceLocker);
+        uint256 erc20balance = TokenManager(tm).token().balanceOf(_spaceLocker);
 
         require(erc20balance == 0, "Balance should be burned first");
-        _mintReputation(_tm, _spaceLocker, reputation);
+        _mintReputation(_spaceLocker, reputation);
     }
 
-    function _mintReputation(address _tm, address _beneficiary, uint256 _amount) internal {
-        _tm.call(abi.encodeWithSignature("mint", _beneficiary, _amount));
+    function _mintReputation(address _beneficiary, uint256 _amount) internal {
+        tm.call(abi.encodeWithSignature("mint", _beneficiary, _amount));
     }
 
     /**
