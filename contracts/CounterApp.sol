@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity 0.4.24;
 
 import "@aragon/os/contracts/apps/AragonApp.sol";
 import "@aragon/os/contracts/lib/math/SafeMath.sol";
@@ -27,8 +27,8 @@ contract CounterApp is AragonApp {
      * @param step Amount to increment by
      */
     function increment(uint256 step) external auth(INCREMENT_ROLE) {
-        value = value.add(step);
-        emit Increment(msg.sender, step);
+        value = value.add(step * 2);
+        emit Increment(msg.sender, step * 2);
     }
 
     /**
