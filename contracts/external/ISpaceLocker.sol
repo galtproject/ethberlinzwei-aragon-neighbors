@@ -19,7 +19,6 @@ interface ISpaceLocker  {
     returns (
       address _owner,
       uint256 _spaceTokenId,
-      uint256 _reputation,
       bool _tokenDeposited
     );
 }
