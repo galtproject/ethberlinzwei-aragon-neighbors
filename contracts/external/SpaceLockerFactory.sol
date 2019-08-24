@@ -12,14 +12,17 @@ import "./SpaceLocker.sol";
 
 
 contract SpaceLockerFactory is Ownable {
+  event NewSpaceLocker(address spaceLocker);
+
   ISpaceRegistry public spaceRegistry;
 
   function setRegistry(ISpaceRegistry _spaceRegistry) external onlyOwner {
     spaceRegistry = _spaceRegistry;
   }
 
-  function build(address _spaceTokenContract, address _spaceReputationContract, uint256 _tokenId, address _owner) external returns (SpaceLocker spaceLocker) {
-    spaceLocker = new SpaceLocker(_spaceTokenContract, _spaceReputationContract, _tokenId, _owner);
+  function build(address _spaceTokenContract, uint256 _tokenId, address _owner) external returns (SpaceLocker spaceLocker) {
+    spaceLocker = new SpaceLocker(_spaceTokenContract, _tokenId, _owner);
     spaceRegistry.addLocker(address(spaceLocker));
+    emit NewSpaceLocker(spaceLocker);
   }
 }

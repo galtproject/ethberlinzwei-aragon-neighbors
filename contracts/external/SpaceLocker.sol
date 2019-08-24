@@ -13,21 +13,20 @@ contract SpaceLocker is ISpaceLocker {
 
   event ReputationMint(address indexed dao);
   event ReputationBurn(address indexed dao);
-  event Deposit(uint256 reputation);
-  event Withdrawal(uint256 reputation);
+  event Deposit();
+  event Withdrawal();
 
   address public spaceTokenContract;
   address public spaceReputationContract;
   address public owner;
 
   uint256 public spaceTokenId;
-  uint256 public reputation;
   bool public tokenDeposited;
 
   ArraySet.AddressSet internal daos;
 
   // tokenId can't be changed later
-  constructor(address _spaceTokenContract, address _spaceReputationContract, uint256 _tokenId, address _owner) public {
+  constructor(address _spaceTokenContract, uint256 _tokenId, address _owner) public {
     owner = _owner;
   }
 
@@ -39,24 +38,22 @@ contract SpaceLocker is ISpaceLocker {
   function deposit() external onlyOwner {
     require(!tokenDeposited, "Token already deposited");
 
-    reputation = ISpaceReputation(spaceReputationContract).balanceOf(spaceTokenId);
     tokenDeposited = true;
 
     ERC721Token(spaceTokenContract).transferFrom(msg.sender, address(this), spaceTokenId);
 
-    emit Deposit(reputation);
+    emit Deposit();
   }
 
   function withdraw(uint256 _spaceTokenId) external onlyOwner {
     require(tokenDeposited, "Token not deposited");
     require(daos.size() == 0, "DAOs counter should be 0");
 
-    reputation = 0;
     tokenDeposited = false;
 
     ERC721Token(spaceTokenContract).safeTransferFrom(address(this), msg.sender, _spaceTokenId);
 
-    emit Withdrawal(reputation);
+    emit Withdrawal();
   }
 
   function approveMint(IDao _dao) external onlyOwner {
@@ -110,14 +107,12 @@ contract SpaceLocker is ISpaceLocker {
     returns (
       address _owner,
       uint256 _spaceTokenId,
-      uint256 _reputation,
       bool _tokenDeposited
     )
   {
     return (
       owner,
       spaceTokenId,
-      reputation,
       tokenDeposited
     );
   }

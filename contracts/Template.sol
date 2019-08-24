@@ -72,11 +72,7 @@ contract Template is TemplateBase {
         return keccak256(abi.encodePacked(apmNamehash("open"), keccak256("neighbors")));
     }
 
-    function newInstance(
-        address _spaceTokenContract,
-        ISpaceReputation _spaceReputationContract,
-        ISpaceRegistry _spaceRegistryContract
-    ) public {
+    function newInstance() public {
         Kernel dao = fac.newDAO(this);
         ACL acl = ACL(dao.acl());
         acl.createPermission(this, dao, dao.APP_MANAGER_ROLE(), this);
