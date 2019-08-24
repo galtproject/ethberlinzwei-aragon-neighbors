@@ -1,23 +1,32 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useAragonApi } from '@aragon/api-react'
-import { Main, Button } from '@aragon/ui'
+import { Main, Button, Field } from '@aragon/ui'
 import styled from 'styled-components'
 
 function App() {
-  const { api, appState } = useAragonApi()
-  const { count, syncing } = appState
+  const { api, appState } = useAragonApi();
+  const { syncing } = appState;
+
+  const state = {
+    organizationAddress: useState(''),
+    spaceTokenAddress: useState('')
+  };
+  
+  function submit() {
+    console.log('organizationAddress', organizationAddress);
+  }
+  
   return (
     <Main>
       <BaseLayout>
+        <Field label="Your organization address">
+          <input value={organizationAddress} onChange={(val) => state.organizationAddress[1](val.target.value)} />
+        </Field>
+  
         {syncing && <Syncing />}
-        <Count>Count: {count}</Count>
-        <Count>{{tokenManagerAddress}}</Count>
         <Buttons>
-          <Button mode="secondary" onClick={() => api.decrement(1)}>
-            Decrement
-          </Button>
-          <Button mode="secondary" onClick={() => api.increment(1)}>
-            Increment
+          <Button mode="secondary" onClick={() => submit()}>
+            Setup
           </Button>
         </Buttons>
       </BaseLayout>

@@ -12,6 +12,9 @@ const tokenManagerAddress = api.externals(['token-manager']);
 api.store(
   async (state, event) => {
     let newState;
+    
+    console.log('tokenManagerAddress.address', tokenManagerAddress.address)
+    console.log('tokenManagerAddress.address()', tokenManagerAddress.address())
 
     switch (event.event) {
       case INITIALIZATION_TRIGGER:
@@ -26,6 +29,8 @@ api.store(
       default:
         newState = state
     }
+
+    newState.organizationAddress = '';
 
     return newState
   },
