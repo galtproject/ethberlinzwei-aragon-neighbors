@@ -32,6 +32,7 @@ const ANY_ADDRESS = '0xffffffffffffffffffffffffffffffffffffffff';
 const n = '0x00';
 
 let app;
+let dao;
 let counterApp;
 let tokenManager;
 let voting;
@@ -39,9 +40,7 @@ let token;
 
 const appManager = '0xb4124cEB3451635DAcedd11767f004d8a28c6eE7';
 
-module.exports = async (
-  truffleExecCallback
-) => {
+module.exports = async truffleExecCallback => {
   console.log('hey-1');
   const spaceLockerFactory = await SpaceLockerFactory.new();
   console.log('hey-2');
@@ -52,7 +51,7 @@ module.exports = async (
 
   await spaceLockerFactory.setRegistry(spaceRegistry.address);
   console.log('hey-1-1');
-  const { counterApp, tokenManager, dao} = await deployDao();
+  const { counterApp, tokenManager, dao } = await deployDao();
   console.log('DAO address is', dao.address);
 };
 
@@ -116,9 +115,7 @@ async function deployDao() {
   counterApp = CounterApp.at(
     getEventArgument(receipt, 'DeployInstance', 'counterApp')
   );
-  dao = Kernel.at(
-    getEventArgument(receipt, 'DeployInstance', 'dao')
-  );
+  dao = Kernel.at(getEventArgument(receipt, 'DeployInstance', 'dao'));
 
   return {
     dao,
