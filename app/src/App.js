@@ -11,6 +11,7 @@ function App() {
       <BaseLayout>
         {syncing && <Syncing />}
         <Count>Count: {count}</Count>
+        <Count>{{tokenManagerAddress}}</Count>
         <Buttons>
           <Button mode="secondary" onClick={() => api.decrement(1)}>
             Decrement
