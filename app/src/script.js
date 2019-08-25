@@ -6,13 +6,13 @@ import AragonApi from '@aragon/api'
 const INITIALIZATION_TRIGGER = Symbol('INITIALIZATION_TRIGGER');
 
 const api = new AragonApi();
-
+/*
 (async() => {
   const tokenManagerAddress = await api.externals(['token-manager']).toPromise();
   console.log('tokenManagerAddress.address', tokenManagerAddress)
   console.log('tokenManagerAddress.address', tokenManagerAddress.address)
   console.log('tokenManagerAddress.address()', tokenManagerAddress.address())
-})();
+})();*/
 
 api.store(
   async (state, event) => {

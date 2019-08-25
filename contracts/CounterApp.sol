@@ -3,12 +3,15 @@ pragma solidity 0.4.24;
 import "@aragon/os/contracts/lib/math/SafeMath.sol";
 import "@aragon/os/contracts/apps/AragonApp.sol";
 import "@aragon/apps-token-manager/contracts/TokenManager.sol";
+//import "@aragon/os/contracts/apm/APMNamehash.sol";
 import "./external/ISpaceLocker.sol";
 import "./external/ISpaceReputation.sol";
 import "./external/ISpaceRegistry.sol";
 
 
-contract CounterApp is AragonApp {
+contract CounterApp is AragonApp
+//, APMNamehash 
+{
     using SafeMath for uint256;
 
     /// Events
@@ -32,6 +35,14 @@ contract CounterApp is AragonApp {
     function initialize() public onlyInit {
         initialized();
     }
+
+//    function getVotingHash() external view returns (bytes32) {
+//        return apmNamehash("voting");
+//    }
+//
+//    function getTokenManagerHash() external view returns (bytes32) {
+//        return apmNamehash("token-manager");
+//    }
 
     /**
      * @notice Initial user provides required values
