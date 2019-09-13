@@ -1,11 +1,10 @@
 /*
- * SPDX-License-Identitifer:    GPL-3.0-or-later
+ * Copyright ©️ 2019 GaltProject Society Construction and Terraforming Company
+ * (Founded by [Nikolai Popeka](https://github.com/npopeka)
  *
- * This file requires contract dependencies which are licensed as
- * GPL-3.0-or-later, forcing it to also be licensed as such.
- *
- * This is the only file in your project that requires this license and
- * you are free to choose a different license for the rest of the project.
+ * Copyright ©️ 2019 Galt•Core Blockchain Company
+ * (Founded by [Nikolai Popeka](https://github.com/npopeka) by
+ * [Basic Agreement](ipfs/QmaCiXUmSrP16Gz8Jdzq6AJESY1EAANmmwha15uR3c1bsS)).
  */
 
 pragma solidity 0.4.24;
